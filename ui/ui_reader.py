@@ -111,6 +111,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBar.actionTriggered.connect(MainWindow.actionTriggered)
+        self.listView.clicked.connect(MainWindow.pageClicked)
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi

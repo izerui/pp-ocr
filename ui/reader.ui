@@ -174,8 +174,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>listView</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pageClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>189</x>
+     <y>698</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>actionTriggered()</slot>
+  <slot>pageClicked()</slot>
  </slots>
 </ui>

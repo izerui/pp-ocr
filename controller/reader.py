@@ -1,5 +1,6 @@
 import imghdr
 import os
+from itertools import groupby
 
 import fitz
 from PySide6 import QtGui, QtCore
@@ -23,6 +24,7 @@ class Reader(QMainWindow, Ui_MainWindow):
         self.ocr = PaddleOCR(use_angle_cls=True, lang="ch")
         self.splitter.setSizes([20000, 70000])
         self.splitter_2.setSizes([60000, 20000])
+        self.file = None
 
     # @Slot()
     # def mouseMoveAndFlag(self, event: QMouseEvent):
@@ -42,25 +44,28 @@ class Reader(QMainWindow, Ui_MainWindow):
             self.listView.setModel(ThumbModel())
             fileDialog = QFileDialog()
             files = fileDialog.getOpenFileName(self, '选择要识别的图片', os.getcwd())
-            if imghdr.what(files[0]):
-                self.renderImage(files[0])
+            self.file = files[0]
+            if imghdr.what(self.file):
+                self.renderImage()
             elif str(files[0]).lower().endswith('.pdf'):
-                self.renderPdf(files[0])
+                self.renderPdf(0)
 
     # 渲染图片
-    def renderImage(self, f):
+    def renderImage(self):
         # 设置分页预览
-        model = ThumbModel(f, 1, 0)
+        model = ThumbModel(self.file, 1, 0)
         self.listView.setModel(model)
         self.listView.setCurrentIndex(model.index(0))
         # img = check_img(files[0])
         # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
-        jpg = QtGui.QPixmap(f)
+        jpg = QtGui.QPixmap(self.file)
         self.renderPixmap(jpg)
 
-    def renderPdf(self, f):
-        with fitz.open(f) as pdf:
-            page = pdf.load_page(0)
+    def renderPdf(self, pageIndex):
+        with fitz.open(self.file) as pdf:
+            if pageIndex + 1 > pdf.page_count:
+                pageIndex = pdf.page_count - 1
+            page = pdf.load_page(pageIndex)
             # 设置缩放比例
             # mat = fitz.Matrix(2, 2)
             # alpha 不透明
@@ -68,9 +73,9 @@ class Reader(QMainWindow, Ui_MainWindow):
             image_format = QImage.Format_RGBA8888 if pixmap.alpha else QImage.Format_RGB888
             page_image = QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride, image_format)
             # 设置分页预览
-            model = ThumbModel(f, pdf.page_count, 0)
+            model = ThumbModel(self.file, pdf.page_count, 0)
             self.listView.setModel(model)
-            self.listView.setCurrentIndex(model.index(0))
+            self.listView.setCurrentIndex(model.index(pageIndex))
         # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
         qpixmap = QPixmap.fromImage(page_image)
         self.renderPixmap(qpixmap)
@@ -98,3 +103,10 @@ class Reader(QMainWindow, Ui_MainWindow):
         pixmap.save(buff, "PNG")
         result = self.ocr.ocr(ba.data(), cls=True)
         QMessageBox.information(None, '解析结果', repr(result))
+
+    @Slot()
+    def pageClicked(self):
+        pageIndex = -1
+        for rowIndex, group in groupby(self.listView.selectedIndexes(), lambda x: x.row()):
+            pageIndex = rowIndex
+        self.renderPdf(pageIndex)
