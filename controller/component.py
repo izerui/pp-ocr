@@ -40,7 +40,7 @@ class ImageLabel(QLabel):
         if pixmap:
             self.imageRectGrabed.emit(pixmap)
             # pixmap.save('pixmap.png')
-        self.flag = False
+        # self.flag = False
 
     # 获取选择框区域内的图片
     def getRectRegionPixmap(self):

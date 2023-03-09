@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/logo">
+    <file>logo/large.png</file>
+    <file>logo/small.png</file>
     <file>logo/ocr.png</file>
     <file>logo/open.png</file>
   </qresource>

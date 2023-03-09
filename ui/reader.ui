@@ -124,6 +124,9 @@
     <bool>false</bool>
    </attribute>
    <addaction name="openFileAction"/>
+   <addaction name="separator"/>
+   <addaction name="largeAction"/>
+   <addaction name="smallAction"/>
   </widget>
   <action name="openFileAction">
    <property name="icon">
@@ -144,6 +147,27 @@
    </property>
    <property name="text">
     <string>开始识别</string>
+   </property>
+  </action>
+  <action name="largeAction">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/logo/logo/large.png</normaloff>:/logo/logo/large.png</iconset>
+   </property>
+   <property name="text">
+    <string>放大</string>
+   </property>
+  </action>
+  <action name="smallAction">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/logo/logo/small.png</normaloff>:/logo/logo/small.png</iconset>
+   </property>
+   <property name="text">
+    <string>缩小</string>
+   </property>
+   <property name="toolTip">
+    <string>缩小</string>
    </property>
   </action>
  </widget>
