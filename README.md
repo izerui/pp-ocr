@@ -8,7 +8,7 @@
 * ocr模块,自编译: `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`
 * ocr模块: `pip install paddleocr -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
   > 卸载protobuf `pip uninstall protobuf`，安装指定protobuf版本: `pip install protobuf==3.20.0 -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
-# pyside: `pip install pyside -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
+* pyside: `pip install pyside -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
 
 # 修复依赖错误
 * ocr依赖的PyMuPDF==1.20.2版本问题：https://github.com/PaddlePaddle/PaddleOCR/pull/9340
