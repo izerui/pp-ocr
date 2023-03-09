@@ -7,7 +7,7 @@
 * 飞浆: `pip install paddlepaddle -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
 * ocr模块,自编译: `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`
 * ocr模块: `pip install paddleocr -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
-  > 卸载protobuf `pip uninstall protobuf`，安装指定protobuf版本: `pip install protobuf==3.20.0 -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
+  > 卸载protobuf `pip uninstall protobuf`，安装指定protobuf版本: `pip install protobuf==3.20.0 --no-deps -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
 * pyside: `pip install pyside -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
 
 # 修复依赖错误
@@ -19,4 +19,4 @@
 * error: command 'swig' failed: No such file or directory: `brew install swig`
 
 # 更多模型
-* https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/doc/doc_ch/models_list.md
+* https://github.com/izerui/PaddleOCR/blob/release/2.6/doc/doc_ch/quickstart.md#11
