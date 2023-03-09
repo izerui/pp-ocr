@@ -21,5 +21,5 @@ class OcrThread(QThread):
         buff = QtCore.QBuffer(ba)
         buff.open(QtCore.QIODevice.WriteOnly)
         self.pixmap.save(buff, "PNG")
-        result = ocr.ocr(ba.data(), cls=True)
+        result = ocr.ocr(ba.data(), det=True, rec=True, cls=True)
         self.ocr_result.emit(result, self.rect)
