@@ -59,7 +59,7 @@ class ImageLabel(QLabel):
         super().paintEvent(event)
         # 根据初始点击坐标和当前鼠标坐标绘制矩形
         if self.flag:  # 鼠标按下移动中、画布重新显示时
-            print('绘制坐标:', self.startPoint, self.endPoint)
+            # print('绘制坐标:', self.startPoint, self.endPoint)
             self.lastRect = QRect(self.startPoint, self.endPoint)
             painter = QPainter(self)
             painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))

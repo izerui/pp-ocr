@@ -47,27 +47,30 @@ class Reader(QMainWindow, Ui_MainWindow):
         if action.objectName() == 'openFileAction':
             # 先清空预览
             self.listView.setModel(ThumbModel())
+            self.zoom = 100
             fileDialog = QFileDialog()
             files = fileDialog.getOpenFileName(self, '选择要识别的图片', os.getcwd())
             self.file = files[0] if files[0] else None
             self.render()
         elif action.objectName() == 'largeAction':
+            if not self.file:
+                return
             self.zoom += 10
             self.zoom = max(self.zoom, 10)
             self.zoom = min(self.zoom, 300)
             self.render()
         elif action.objectName() == 'smallAction':
+            if not self.file:
+                return
             self.zoom -= 10
             self.zoom = max(self.zoom, 10)
             self.zoom = min(self.zoom, 300)
             self.render()
         self.showStatusTip()
 
-
     def showStatusTip(self):
         if self.file:
             self.statusbar.showMessage(f'文件: {self.file}    当前页: {self.pageIndex + 1}    缩放比例: {self.zoom}%')
-
 
     # 渲染image或者pdf
     def render(self):
@@ -87,7 +90,7 @@ class Reader(QMainWindow, Ui_MainWindow):
         # img = check_img(files[0])
         # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
         jpg = QtGui.QPixmap(self.file)
-        self.renderPixmap(jpg)
+        self.renderPixmap(jpg.scaled(self.zoom / 100.0 * jpg.width(), self.zoom / 100.0 * self.height()))
 
     def renderPdf(self):
         with fitz.open(self.file) as pdf:
@@ -95,7 +98,7 @@ class Reader(QMainWindow, Ui_MainWindow):
                 self.pageIndex = pdf.page_count - 1
             page = pdf.load_page(self.pageIndex)
             # 设置缩放比例
-            mat = fitz.Matrix(self.zoom/100.0, self.zoom/100.0)
+            mat = fitz.Matrix(self.zoom / 100.0, self.zoom / 100.0)
             # alpha 不透明
             pixmap = page.get_pixmap(matrix=mat, alpha=False)
             image_format = QImage.Format_RGBA8888 if pixmap.alpha else QImage.Format_RGB888
