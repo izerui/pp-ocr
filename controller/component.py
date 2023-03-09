@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QLabel
 class ImageLabel(QLabel):
 
     # 矩形绘画完毕信号
-    imageRectGrabed = Signal(QPixmap)
+    imageRectGrabed = Signal(QPixmap, QRect)
 
     # 拖拽矩形鼠标移动信号
     mouseMoveAndFlag = Signal(PySide6.QtGui.QMouseEvent)
@@ -38,7 +38,7 @@ class ImageLabel(QLabel):
     def mouseReleaseEvent(self, event: PySide6.QtGui.QMouseEvent) -> None:
         pixmap = self.getRectRegionPixmap()
         if pixmap:
-            self.imageRectGrabed.emit(pixmap)
+            self.imageRectGrabed.emit(pixmap, self.lastRect)
             # pixmap.save('pixmap.png')
         # self.flag = False
 

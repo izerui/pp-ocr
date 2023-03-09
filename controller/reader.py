@@ -1,15 +1,17 @@
 import imghdr
 import os
+import threading
 from itertools import groupby
+from queue import Queue
 
 import fitz
-from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Slot, QEvent, QObject
-from PySide6.QtGui import QAction, Qt, QPixmap, QImage, QMouseEvent
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from paddleocr import PaddleOCR
+from PySide6 import QtGui
+from PySide6.QtCore import Slot, QEvent, QObject, QRect
+from PySide6.QtGui import QAction, Qt, QPixmap, QImage
+from PySide6.QtWidgets import QMainWindow, QFileDialog
 
 from controller.model import ThumbModel
+from controller.thread import OcrThread
 from ui.ui_reader import Ui_MainWindow
 
 
@@ -21,15 +23,22 @@ class Reader(QMainWindow, Ui_MainWindow):
         self.scrollArea.installEventFilter(self)
         self.label.imageRectGrabed.connect(self.ocrImage)
         # self.label.mouseMoveAndFlag.connect(self.mouseMoveAndFlag)
-        self.ocr = PaddleOCR(use_angle_cls=True, lang="ch")
         self.splitter.setSizes([20000, 70000])
         self.splitter_2.setSizes([60000, 20000])
+        self.ocrQueue = Queue()
+        self.ocrQueueThread = threading.Thread(target=self.ocrQueueDaemonThread, daemon=True)
+        self.ocrQueueThread.start()
         # 选择的文件
         self.file = None
         # 当前页
         self.pageIndex = 0
         # 缩放比例： 100：原比例 200：放大2倍 50：缩小一倍
         self.zoom = 100
+
+    def ocrQueueDaemonThread(self):
+        while True:
+            queue: Queue = self.ocrQueue.get()
+            queue.start()
 
     # @Slot()
     # def mouseMoveAndFlag(self, event: QMouseEvent):
@@ -131,14 +140,15 @@ class Reader(QMainWindow, Ui_MainWindow):
         return super().eventFilter(source, event)
 
     @Slot()
-    def ocrImage(self, pixmap: QPixmap):
-        ba = QtCore.QByteArray()
-        buff = QtCore.QBuffer(ba)
-        buff.open(QtCore.QIODevice.WriteOnly)
-        pixmap.save(buff, "PNG")
-        result = self.ocr.ocr(ba.data(), cls=True)
-        self.textBrowser.append(f'{result} \n')
-        # QMessageBox.information(None, '解析结果', repr(result))
+    def ocrImage(self, pixmap: QPixmap, rect: QRect):
+        ocrThread = OcrThread(pixmap, rect)
+        ocrThread.ocr_result.connect(self.ocrResultCall)
+        self.ocrQueue.put_nowait(ocrThread)
+
+    @Slot()
+    def ocrResultCall(self, result, rect):
+        self.textBrowser.append(f'识别的区域: {repr(rect)} \t')
+        self.textBrowser.append(f'识别结果: {result} \n')
 
     @Slot()
     def pageClicked(self):
