@@ -1,14 +1,11 @@
 import imghdr
 import os
-from pathlib import Path
-from tempfile import gettempdir
 
 import fitz
 from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Slot, QEvent
-from PySide6.QtGui import QAction, QImage, Qt, QPixmap
+from PySide6.QtCore import Slot, QEvent, QObject
+from PySide6.QtGui import QAction, Qt, QPixmap, QImage, QMouseEvent
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from fitz import Page, Annot, Pixmap
 from paddleocr import PaddleOCR
 
 from controller.model import ThumbModel
@@ -22,14 +19,23 @@ class Reader(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.scrollArea.installEventFilter(self)
         self.label.imageRectGrabed.connect(self.ocrImage)
+        # self.label.mouseMoveAndFlag.connect(self.mouseMoveAndFlag)
         self.ocr = PaddleOCR(use_angle_cls=True, lang="ch")
         self.splitter.setSizes([20000, 70000])
         self.splitter_2.setSizes([60000, 20000])
-        self.imagePaths = []
+
+    # @Slot()
+    # def mouseMoveAndFlag(self, event: QMouseEvent):
+    #     if event.x() > self.scrollArea.width() + self.scrollArea.x():
+    #         self.scrollArea.horizontalScrollBar().setValue(event.x())
+    #     if event.y() > self.scrollArea.height() + self.scrollArea.y():
+    #         self.scrollArea.verticalScrollBar().setValue(event.y())
+    #     # print('scroll', self.scrollArea.width() + self.scrollArea.x(), self.scrollArea.height() + self.scrollArea.y())
+    #     # print('mouse', event.x(), event.y())
+    #     pass
 
     @Slot()
     def actionTriggered(self, *args):
-        self.imagePaths = []
         action: QAction = args[0]
         if action.objectName() == 'openFileAction':
             # 先清空预览
@@ -43,38 +49,31 @@ class Reader(QMainWindow, Ui_MainWindow):
 
     # 渲染图片
     def renderImage(self, f):
-        self.imagePaths = [f]
         # 设置分页预览
-        self.listView.setModel(ThumbModel(self.imagePaths))
+        model = ThumbModel(f, 1, 0)
+        self.listView.setModel(model)
+        self.listView.setCurrentIndex(model.index(0))
         # img = check_img(files[0])
         # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
-        png = QtGui.QPixmap(self.imagePaths[0])
-        self.renderPixmap(png)
+        jpg = QtGui.QPixmap(f)
+        self.renderPixmap(jpg)
 
     def renderPdf(self, f):
-        _fname = os.path.splitext(os.path.basename(f))[0]
-        self.imagePaths = []
         with fitz.open(f) as pdf:
-            tmpFolder = os.path.join(gettempdir(), '.{}'.format(hash(os.times())))
-            os.makedirs(tmpFolder)
-            for index in range(pdf.page_count):
-                page: Annot = pdf.load_page(index)
-                pixmap: Pixmap = page.get_pixmap()
-                _tmpPath = str(Path(tmpFolder) / f'{_fname}_{index}.png')
-                pixmap.save(_tmpPath)
-                print(_tmpPath)
-                self.imagePaths.append(_tmpPath)
-
-                # fitz pixmap 转成 qt QImage
-                # image_format = QImage.Format_RGBA8888 if pixmap.alpha else QImage.Format_RGB888
-                # page_image = QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride, image_format)
-
-        # 设置分页预览
-        self.listView.setModel(ThumbModel(self.imagePaths))
+            page = pdf.load_page(0)
+            # 设置缩放比例
+            # mat = fitz.Matrix(2, 2)
+            # alpha 不透明
+            pixmap = page.get_pixmap(alpha=False)
+            image_format = QImage.Format_RGBA8888 if pixmap.alpha else QImage.Format_RGB888
+            page_image = QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride, image_format)
+            # 设置分页预览
+            model = ThumbModel(f, pdf.page_count, 0)
+            self.listView.setModel(model)
+            self.listView.setCurrentIndex(model.index(0))
         # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
-        # qpixmap = QPixmap.fromImage(self.images[0])
-        png = QtGui.QPixmap(self.imagePaths[0])
-        self.renderPixmap(png)
+        qpixmap = QPixmap.fromImage(page_image)
+        self.renderPixmap(qpixmap)
 
     def renderPixmap(self, pixmap):
         self.label.clear()
@@ -84,7 +83,7 @@ class Reader(QMainWindow, Ui_MainWindow):
         self.label.setCursor(Qt.CrossCursor)
 
     # 监听滚动区域的事件
-    def eventFilter(self, source, event):
+    def eventFilter(self, source: QObject, event: QEvent):
         if source == self.scrollArea:
             # print(event.type())
             if event.type() == QEvent.Type.Wheel:

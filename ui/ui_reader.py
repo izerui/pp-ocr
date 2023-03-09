@@ -16,9 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QListView, QMainWindow,
-    QMenuBar, QScrollArea, QSizePolicy, QSplitter,
-    QStatusBar, QTextBrowser, QToolBar, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QListView,
+    QMainWindow, QMenuBar, QScrollArea, QSizePolicy,
+    QSplitter, QStatusBar, QTextBrowser, QToolBar,
+    QWidget)
 
 from controller.component import ImageLabel
 import images_rc
@@ -53,6 +54,7 @@ class Ui_MainWindow(object):
         self.listView = QListView(self.splitter)
         self.listView.setObjectName(u"listView")
         self.listView.setMaximumSize(QSize(200, 16777215))
+        self.listView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.splitter.addWidget(self.listView)
         self.widget_2 = QWidget(self.splitter)
         self.widget_2.setObjectName(u"widget_2")
