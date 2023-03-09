@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/logo">
+    <file>logo/ocr.png</file>
     <file>logo/open.png</file>
   </qresource>
 </RCC>
