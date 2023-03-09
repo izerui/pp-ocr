@@ -20,7 +20,8 @@ class Reader(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.scrollArea.installEventFilter(self)
+        # 注册滚动区域事件到当前self.eventFilter
+        # self.scrollArea.installEventFilter(self)
         self.label.imageRectGrabed.connect(self.ocrImage)
         # self.label.mouseMoveAndFlag.connect(self.mouseMoveAndFlag)
         self.splitter.setSizes([20000, 70000])
