@@ -1,6 +1,6 @@
 import os
+import shutil
 import tempfile
-import threading
 from pathlib import Path
 from typing import Union, Any
 
@@ -19,15 +19,24 @@ class ThumbModel(QAbstractListModel):
         self.page_num = page_num
         # self.thumbnailThread = threading.Thread(target=self.generate_thumbnail)
         # self.thumbnailThread.start()
+        self.tmp_folder = None
         self.thumbnail_page_files = []
         self.generate_thumbnail()
 
+    def __del__(self):
+        if self.tmp_folder:
+            try:
+                # print('删除缩略图文件夹:', self.tmp_folder)
+                shutil.rmtree(self.tmp_folder)
+            except:
+                pass
+
     def generate_thumbnail(self):
-        tmp_folder = tempfile.mkdtemp()
-        print(tmp_folder)
+        self.tmp_folder = tempfile.mkdtemp()
+        print(self.tmp_folder)
         dir_name, full_file_name = os.path.split(self.file)
         file_base_name = os.path.splitext(full_file_name)[0]
-        tmp_file_base_name = str(Path(tmp_folder) / file_base_name)
+        tmp_file_base_name = str(Path(self.tmp_folder) / file_base_name)
         with fitz.open(self.file) as doc:
             for pageIndex in range(doc.page_count):
                 page = doc.load_page(pageIndex)
@@ -43,9 +52,10 @@ class ThumbModel(QAbstractListModel):
         row = index.row()
         col = index.column()
         if role == Qt.DisplayRole:
-            return None # f'第{row + 1}页'
+            return None  # f'第{row + 1}页'
         elif role == Qt.DecorationRole:
-            if self.thumbnail_page_files and row in range(len(self.thumbnail_page_files)) and self.thumbnail_page_files[row]:
+            if self.thumbnail_page_files and row in range(len(self.thumbnail_page_files)) and self.thumbnail_page_files[
+                row]:
                 return QPixmap(self.thumbnail_page_files[row])
             return None
 

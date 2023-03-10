@@ -34,6 +34,18 @@
        <item>
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QGridLayout" name="gridLayout_4">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item row="0" column="0">
            <widget class="QSplitter" name="splitter_2">
             <property name="orientation">
@@ -48,8 +60,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>586</width>
-                <height>74</height>
+                <width>610</width>
+                <height>79</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout">
