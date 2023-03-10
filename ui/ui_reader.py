@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QListView,
-    QMainWindow, QMenuBar, QScrollArea, QSizePolicy,
-    QSplitter, QStatusBar, QTextBrowser, QToolBar,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
+    QListView, QMainWindow, QMenuBar, QScrollArea,
+    QSizePolicy, QSplitter, QStatusBar, QTextBrowser,
+    QToolBar, QWidget)
 
 from controller.component import ImageLabel
 import images_rc
@@ -55,18 +55,16 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.widget = QWidget(self.centralwidget)
         self.widget.setObjectName(u"widget")
-        self.gridLayout_3 = QGridLayout(self.widget)
-        self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.splitter = QSplitter(self.widget)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setBaseSize(QSize(0, 0))
-        self.splitter.setOrientation(Qt.Horizontal)
-        self.listView = QListView(self.splitter)
+        self.horizontalLayout = QHBoxLayout(self.widget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.listView = QListView(self.widget)
         self.listView.setObjectName(u"listView")
-        self.listView.setMaximumSize(QSize(200, 16777215))
+        self.listView.setMaximumSize(QSize(130, 16777215))
         self.listView.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.splitter.addWidget(self.listView)
-        self.widget_2 = QWidget(self.splitter)
+
+        self.horizontalLayout.addWidget(self.listView)
+
+        self.widget_2 = QWidget(self.widget)
         self.widget_2.setObjectName(u"widget_2")
         self.gridLayout_4 = QGridLayout(self.widget_2)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
@@ -78,7 +76,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 519, 74))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 586, 74))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.label = ImageLabel(self.scrollAreaWidgetContents)
@@ -96,9 +94,8 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.splitter_2, 0, 0, 1, 1)
 
-        self.splitter.addWidget(self.widget_2)
 
-        self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.widget_2)
 
 
         self.gridLayout_2.addWidget(self.widget, 0, 0, 1, 1)
