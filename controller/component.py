@@ -61,7 +61,7 @@ class ImageLabel(QLabel):
             painter = QPainter(self)
             painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
             painter.drawRect(rect)
-        self.drawSampleRects()
+        # self.drawSampleRects()
 
 
     # 开始ocr识别
