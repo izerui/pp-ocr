@@ -1,12 +1,13 @@
 import PySide6.QtGui
+from PySide6 import QtCore
 from PySide6.QtCore import QRect, Qt, Signal, QPoint
-from PySide6.QtGui import QPainter, QPen, QPixmap
-from PySide6.QtWidgets import QLabel
+from PySide6.QtGui import QPainter, QPen, QPixmap, QIcon, QCursor
+from PySide6.QtWidgets import QLabel, QMenu
 
 
 class ImageLabel(QLabel):
     # 矩形绘画完毕信号
-    imageRectGrabed = Signal(QPixmap, QRect)
+    pixmap_rect_ocr = Signal(QPixmap, QRect)
 
     # 拖拽矩形鼠标移动信号
     mouseMoveAndFlag = Signal(PySide6.QtGui.QMouseEvent)
@@ -17,11 +18,19 @@ class ImageLabel(QLabel):
         self.setCursor(Qt.CrossCursor)
         # 鼠标按下状态
         self.flag = False
-        # self.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.contextMenu = QMenu()
-        # self.customContextMenuRequested.connect(self.showContextMenu)
-        # self.ocrAction = self.contextMenu.addAction(QIcon(u":/logo/logo/ocr.png"), '开始识别')
-        # self.ocrAction.triggered.connect(self.ocr2Word)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.contextMenu = QMenu()
+        self.customContextMenuRequested.connect(self.showContextMenu)
+        self.ocrAction = self.contextMenu.addAction(QIcon(u":/logo/logo/ocr.png"), '开始识别')
+        self.ocrAction.triggered.connect(self.beginOcr)
+
+    # 单击鼠标按下事件
+    def mousePressEvent(self, event: PySide6.QtGui.QMouseEvent) -> None:
+        # barHeight = self.bar.height()
+        if event.button() == QtCore.Qt.LeftButton:
+            self.startPoint = event.pos()
+            self.endPoint = None
+            self.flag = True
 
     # 鼠标移动事件
     def mouseMoveEvent(self, event: PySide6.QtGui.QMouseEvent) -> None:
@@ -33,10 +42,7 @@ class ImageLabel(QLabel):
 
     # 鼠标释放事件
     def mouseReleaseEvent(self, event: PySide6.QtGui.QMouseEvent) -> None:
-        pixmap = self.getRectRegionPixmap()
-        if pixmap:
-            print('pixmap: ', pixmap.width(), pixmap.height())
-            self.imageRectGrabed.emit(pixmap, QRect(self.startPoint, self.endPoint))
+        self.beginOcr()
             # pixmap.save('pixmap.png')
         # 鼠标按下状态设置为False
         # self.flag = False
@@ -44,6 +50,26 @@ class ImageLabel(QLabel):
         # self.endPoint = None
         # 释放鼠标使矩形区域消失
         # self.update()
+
+    # 绘制事件
+    def paintEvent(self, event: PySide6.QtGui.QPaintEvent) -> None:
+        super().paintEvent(event)
+        # 根据初始点击坐标和当前鼠标坐标绘制矩形
+        if self.flag and self.endPoint:  # 鼠标按下移动中、画布重新显示时
+            # print('绘制坐标:', self.startPoint, self.endPoint)
+            rect = QRect(self.startPoint, self.endPoint)
+            painter = QPainter(self)
+            painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
+            painter.drawRect(rect)
+        self.drawSampleRects()
+
+
+    # 开始ocr识别
+    def beginOcr(self):
+        pixmap = self.getRectRegionPixmap()
+        if pixmap:
+            print('pixmap: ', pixmap.width(), pixmap.height())
+            self.pixmap_rect_ocr.emit(pixmap, QRect(self.startPoint, self.endPoint))
 
     # 获取选择框区域内的图片
     def getRectRegionPixmap(self):
@@ -62,35 +88,15 @@ class ImageLabel(QLabel):
         pixmap = self.screen().grabWindow(self.winId(), grabX, grabY, grabW, grabH)
         return pixmap
 
-    # 绘制事件
-    def paintEvent(self, event: PySide6.QtGui.QPaintEvent) -> None:
-        super().paintEvent(event)
-        # 根据初始点击坐标和当前鼠标坐标绘制矩形
-        if self.flag and self.endPoint:  # 鼠标按下移动中、画布重新显示时
-            # print('绘制坐标:', self.startPoint, self.endPoint)
-            rect = QRect(self.startPoint, self.endPoint)
-            painter = QPainter(self)
-            painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
-            painter.drawRect(rect)
-        self.drawSampleRects()
-
     def drawSampleRects(self):
-        rect = QRect(QPoint(20,20), QPoint(200,200))
+        rect = QRect(QPoint(20, 20), QPoint(200, 200))
         painter = QPainter(self)
         painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
         painter.drawRect(rect)
+    # def clear(self) -> None:
+    #     super().clear()
+    #     self.flag = False
 
-    # 单击鼠标按下事件
-    def mousePressEvent(self, event: PySide6.QtGui.QMouseEvent) -> None:
-        # barHeight = self.bar.height()
-        self.startPoint = event.pos()
-        self.endPoint = None
-        self.flag = True
-
-    def clear(self) -> None:
-        super().clear()
-        self.flag = False
-
-    # def showContextMenu(self):
-    #     self.contextMenu.move(QCursor.pos())
-    #     self.contextMenu.show()
+    def showContextMenu(self):
+        self.contextMenu.move(QCursor.pos())
+        self.contextMenu.show()
