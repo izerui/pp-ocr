@@ -72,9 +72,9 @@ class ImageLabel(QLabel):
             painter = QPainter(self)
             painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
             painter.drawRect(rect)
-        self.drawDefaultRects()
+        self.drawSampleRects()
 
-    def drawDefaultRects(self):
+    def drawSampleRects(self):
         rect = QRect(QPoint(20,20), QPoint(200,200))
         painter = QPainter(self)
         painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
