@@ -12,7 +12,7 @@
 
 # 修复依赖错误
 * ocr依赖的PyMuPDF==1.20.2版本问题：https://github.com/PaddlePaddle/PaddleOCR/pull/9340
-  * 修复方式： 直接修改`site-packages/paddleocr/ppocr/utils/utility.py` line 96 源码，将`pageCount`改为`page_count`
+  * 修复方式： 直接修改`site-packages/paddleocr/ppocr/utils/utility.py` line 96 源码，1. 将`pageCount`改为`page_count` 2. 将`getPixmap`改为`get_pixmap`
 
 # 安装问题(mac arm)
 * 缺少cv2模块: `pip install opencv-python -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
