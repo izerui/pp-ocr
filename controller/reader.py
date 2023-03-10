@@ -148,8 +148,12 @@ class Reader(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def ocrResultCall(self, result, rect):
-        self.textBrowser.append(f'识别的区域: {repr(rect)} \t')
-        self.textBrowser.append(f'识别结果: {result} \n')
+        # self.textBrowser.append(f'识别的区域: {repr(rect)} \t')
+        txts = ''
+        for res in result:
+            lines = [line[1][0] for line in res]
+            txts = '\t\r'.join(lines)
+        self.textBrowser.append(f'识别结果: \t\r{txts} \n')
 
     @Slot()
     def pageClicked(self):
