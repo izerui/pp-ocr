@@ -1,5 +1,5 @@
 import PySide6.QtGui
-from PySide6.QtCore import QRect, Qt, Signal
+from PySide6.QtCore import QRect, Qt, Signal, QPoint
 from PySide6.QtGui import QPainter, QPen, QPixmap
 from PySide6.QtWidgets import QLabel
 
@@ -39,11 +39,11 @@ class ImageLabel(QLabel):
             self.imageRectGrabed.emit(pixmap, QRect(self.startPoint, self.endPoint))
             # pixmap.save('pixmap.png')
         # 鼠标按下状态设置为False
-        self.flag = False
-        self.startPoint = None
-        self.endPoint = None
+        # self.flag = False
+        # self.startPoint = None
+        # self.endPoint = None
         # 释放鼠标使矩形区域消失
-        self.update()
+        # self.update()
 
     # 获取选择框区域内的图片
     def getRectRegionPixmap(self):
@@ -72,6 +72,13 @@ class ImageLabel(QLabel):
             painter = QPainter(self)
             painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
             painter.drawRect(rect)
+        self.drawDefaultRects()
+
+    def drawDefaultRects(self):
+        rect = QRect(QPoint(20,20), QPoint(200,200))
+        painter = QPainter(self)
+        painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
+        painter.drawRect(rect)
 
     # 单击鼠标按下事件
     def mousePressEvent(self, event: PySide6.QtGui.QMouseEvent) -> None:
