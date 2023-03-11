@@ -4,5 +4,6 @@
     <file>logo/small.png</file>
     <file>logo/ocr.png</file>
     <file>logo/open.png</file>
+    <file>logo/qrcode.png</file>
   </qresource>
 </RCC>

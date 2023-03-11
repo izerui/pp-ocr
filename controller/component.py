@@ -63,12 +63,17 @@ class ImageLabel(QLabel):
             painter.drawRect(rect)
         # self.drawSampleRects()
 
+    def clear(self) -> None:
+        super().clear()
+        self.flag = False
+        self.startPoint = None
+        self.endPoint = None
 
     # 开始ocr识别
     def beginOcr(self):
         pixmap = self.getRectRegionPixmap()
         if pixmap:
-            print('pixmap: ', pixmap.width(), pixmap.height())
+            # print('pixmap: ', pixmap.width(), pixmap.height())
             self.pixmap_rect_ocr.emit(pixmap, QRect(self.startPoint, self.endPoint))
 
     # 获取选择框区域内的图片

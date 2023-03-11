@@ -10,6 +10,7 @@
 * protobuf: `pip install protobuf==3.20.0`
 * paddlepaddle 和 paddleocr: `pip install paddlepaddle paddleocr`
 * pyside: `pip install pyside6`
+* pyzbar(识别二维码): `pip install pyzbar`
 * 打包pyinstaller: `pip install pyinstaller`
 * ~~ocr模块,自编译(未尝试): `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`~~
 
@@ -24,6 +25,7 @@
 * mac: 
   * 缺少cv2模块: `pip install opencv-python`
   * error: command 'swig' failed: No such file or directory: `brew install swig`
+  * Unable to find zbar shared library: `brew install zbar`
 * win:
   * `pip install opencv-python-headless`
 

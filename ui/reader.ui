@@ -130,6 +130,7 @@
    <addaction name="separator"/>
    <addaction name="largeAction"/>
    <addaction name="smallAction"/>
+   <addaction name="actionQrcode"/>
   </widget>
   <action name="openFileAction">
    <property name="icon">
@@ -171,6 +172,21 @@
    </property>
    <property name="toolTip">
     <string>缩小</string>
+   </property>
+  </action>
+  <action name="actionQrcode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/logo/logo/qrcode.png</normaloff>:/logo/logo/qrcode.png</iconset>
+   </property>
+   <property name="text">
+    <string>二维码</string>
+   </property>
+   <property name="toolTip">
+    <string>识别二维码</string>
    </property>
   </action>
  </widget>

@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QMainWindow, QFileDialog
 from fitz import Page
 
 from controller.model import ThumbModel
-from controller.thread import OcrThread
+from controller.thread import OcrThread, QrcodeThread
 from ui.ui_reader import Ui_MainWindow
 
 
@@ -64,6 +64,7 @@ class Reader(QMainWindow, Ui_MainWindow):
             self.file = files[0]
             self.zoom = 100
             self.displayContent(rerender_left=True)
+            self.textBrowser.clear()
         elif action.objectName() == 'largeAction':
             if not self.file:
                 return
@@ -144,13 +145,27 @@ class Reader(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def ocr(self, pixmap: QPixmap, rect: QRect):
-        ocrThread = OcrThread(pixmap, rect)
-        ocrThread.ocr_result.connect(self.ocrResultCall)
-        self.ocrQueue.put_nowait(ocrThread)
+        # 二维码识别模式
+        if self.actionQrcode.isChecked():
+            qrcodeThread = QrcodeThread(pixmap)
+            qrcodeThread.qrcode_result.connect(self.qrcodeResultCall)
+            self.ocrQueue.put_nowait(qrcodeThread)
+        # 文字识别模式
+        else:
+            ocrThread = OcrThread(pixmap, rect)
+            ocrThread.ocr_result.connect(self.ocrResultCall)
+            self.ocrQueue.put_nowait(ocrThread)
+
+    @Slot()
+    def qrcodeResultCall(self, results:list):
+        for res in results:
+            self.textBrowser.append(f'识别二维码内容: \r\t{res["data"]} \n')
 
     @Slot()
     def ocrResultCall(self, result, rect):
         # self.textBrowser.append(f'识别的区域: {repr(rect)} \t')
+        # if not result or len(result[0]) == 0:
+        #     return
         txts = ''
         for res in result:
             lines = [line[1][0] for line in res]
