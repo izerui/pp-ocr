@@ -3,12 +3,15 @@
 # 环境要求
 * python3.10
 
-# 安装依赖(按顺序执行)
-* 飞浆: `pip install paddlepaddle -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
-* ocr模块,自编译: `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`
-* ocr模块: `pip install paddleocr -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
-  > 卸载protobuf `pip uninstall protobuf`，安装指定protobuf版本: `pip install protobuf==3.20.0 --no-deps -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
-* pyside: `pip install pyside -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
+# 安装依赖(按顺序执行) 建议使用百度源: 
+> 修改全局pip源到百度源: `pip config set global.index-url https://mirror.baidu.com/pypi/simple/`
+
+依赖列表
+* protobuf: `pip install protobuf==3.20.0`
+* paddlepaddle 和 paddleocr: `pip install paddlepaddle paddleocr`
+* pyside: `pip install pyside6`
+* ~~ocr模块,自编译(未尝试): `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`~~
+
 
 # 修复依赖错误
 * ocr依赖的PyMuPDF==1.20.2版本问题：https://github.com/PaddlePaddle/PaddleOCR/pull/9340
