@@ -9,6 +9,7 @@ from PySide6 import QtGui
 from PySide6.QtCore import Slot, QEvent, QObject, QRect
 from PySide6.QtGui import QAction, Qt, QPixmap, QImage
 from PySide6.QtWidgets import QMainWindow, QFileDialog
+from fitz import Page
 
 from controller.model import ThumbModel
 from controller.thread import OcrThread
@@ -56,7 +57,8 @@ class Reader(QMainWindow, Ui_MainWindow):
         action: QAction = args[0]
         if action.objectName() == 'openFileAction':
             fileDialog = QFileDialog()
-            files = fileDialog.getOpenFileName(self, '选择要识别的图片', os.getcwd())
+            filters = "图像文件 (*.jpg *.bmp *.jpeg *.png *.psd *.pef *.orf *.tiff *.dng *.pdf *.tif)"
+            files = fileDialog.getOpenFileName(self, '选择要识别的图片', os.getcwd(), filter=filters)
             if not files or not files[0] or files[0] == '':
                 return
             self.file = files[0]
@@ -84,10 +86,11 @@ class Reader(QMainWindow, Ui_MainWindow):
 
     # 渲染image或者pdf
     def displayContent(self, rerender_left=False):
+        name, ext = os.path.splitext(os.path.basename(self.file))
         total_page = 1
         if not self.file:
             return
-        if imghdr.what(self.file):
+        if imghdr.what(self.file) and ext != 'tiff':
             # img = check_img(files[0])
             # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
             jpg = QtGui.QPixmap(self.file)
@@ -97,7 +100,13 @@ class Reader(QMainWindow, Ui_MainWindow):
                 total_page = pdf.page_count
                 if self.pageIndex + 1 > pdf.page_count:
                     self.pageIndex = pdf.page_count - 1
-                page = pdf.load_page(self.pageIndex)
+                page: Page = pdf.load_page(self.pageIndex)
+                # 获取该页的文本块列表
+                text_blocks = page.get_text_blocks()
+                if text_blocks:
+                    for res in text_blocks:
+                        # res: coordinates, text lines, block type and running block number.
+                        self.textBrowser.append(f'读取文本层: \r\t {repr(res[4])}')
                 # 设置缩放比例
                 mat = fitz.Matrix(self.zoom / 100.0, self.zoom / 100.0)
                 # alpha 不透明
@@ -146,7 +155,7 @@ class Reader(QMainWindow, Ui_MainWindow):
         for res in result:
             lines = [line[1][0] for line in res]
             txts = '\r\t'.join(lines)
-        self.textBrowser.append(f'识别结果: \r\t{txts} \n')
+        self.textBrowser.append(f'OCR识别结果: \r\t{txts} \n')
 
     @Slot()
     def pageClicked(self):
