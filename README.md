@@ -10,16 +10,22 @@
 * protobuf: `pip install protobuf==3.20.0`
 * paddlepaddle 和 paddleocr: `pip install paddlepaddle paddleocr`
 * pyside: `pip install pyside6`
+* 打包pyinstaller: `pip install pyinstaller`
 * ~~ocr模块,自编译(未尝试): `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`~~
 
+# 打包
+* win: build.bat
 
 # 修复依赖错误
 * ocr依赖的PyMuPDF==1.20.2版本问题：https://github.com/PaddlePaddle/PaddleOCR/pull/9340
   * 修复方式： 直接修改`site-packages/paddleocr/ppocr/utils/utility.py` line 96 源码，1. 将`pageCount`改为`page_count` 2. 将`getPixmap`改为`get_pixmap`
 
 # 安装问题(mac arm)
-* 缺少cv2模块: `pip install opencv-python -i http://pypi.douban.com/simple --trusted-host pypi.douban.com`
-* error: command 'swig' failed: No such file or directory: `brew install swig`
+* mac: 
+  * 缺少cv2模块: `pip install opencv-python`
+  * error: command 'swig' failed: No such file or directory: `brew install swig`
+* win:
+  * `pip install opencv-python-headless`
 
 # 更多模型
 * https://github.com/izerui/PaddleOCR/blob/release/2.6/doc/doc_ch/quickstart.md#11

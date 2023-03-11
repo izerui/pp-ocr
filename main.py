@@ -2,6 +2,7 @@
 import sys
 
 import paddle
+import cv2
 from PySide6.QtWidgets import QApplication
 
 from controller.reader import Reader
