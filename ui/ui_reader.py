@@ -18,8 +18,8 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QListView, QMainWindow, QMenuBar, QScrollArea,
-    QSizePolicy, QSplitter, QStatusBar, QTabWidget,
-    QTextBrowser, QToolBar, QWidget)
+    QSizePolicy, QSplitter, QStatusBar, QTextBrowser,
+    QToolBar, QWidget)
 
 from controller.component import ImageLabel
 import images_rc
@@ -53,20 +53,18 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout_2 = QGridLayout(self.centralwidget)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.tabWidget = QTabWidget(self.centralwidget)
-        self.tabWidget.setObjectName(u"tabWidget")
-        self.tab = QWidget()
-        self.tab.setObjectName(u"tab")
-        self.horizontalLayout_2 = QHBoxLayout(self.tab)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.listView = QListView(self.tab)
+        self.widget = QWidget(self.centralwidget)
+        self.widget.setObjectName(u"widget")
+        self.horizontalLayout = QHBoxLayout(self.widget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.listView = QListView(self.widget)
         self.listView.setObjectName(u"listView")
         self.listView.setMaximumSize(QSize(130, 16777215))
         self.listView.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.horizontalLayout_2.addWidget(self.listView)
+        self.horizontalLayout.addWidget(self.listView)
 
-        self.widget_2 = QWidget(self.tab)
+        self.widget_2 = QWidget(self.widget)
         self.widget_2.setObjectName(u"widget_2")
         self.gridLayout_4 = QGridLayout(self.widget_2)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
@@ -79,7 +77,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 588, 73))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 610, 79))
         self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName(u"gridLayout")
         self.label = ImageLabel(self.scrollAreaWidgetContents)
@@ -98,14 +96,10 @@ class Ui_MainWindow(object):
         self.gridLayout_4.addWidget(self.splitter_2, 0, 0, 1, 1)
 
 
-        self.horizontalLayout_2.addWidget(self.widget_2)
+        self.horizontalLayout.addWidget(self.widget_2)
 
-        self.tabWidget.addTab(self.tab, "")
-        self.tab_2 = QWidget()
-        self.tab_2.setObjectName(u"tab_2")
-        self.tabWidget.addTab(self.tab_2, "")
 
-        self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.widget, 0, 0, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -130,9 +124,6 @@ class Ui_MainWindow(object):
         self.toolBar.actionTriggered.connect(MainWindow.actionTriggered)
         self.listView.clicked.connect(MainWindow.pageClicked)
 
-        self.tabWidget.setCurrentIndex(0)
-
-
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
@@ -149,8 +140,6 @@ class Ui_MainWindow(object):
         self.smallAction.setToolTip(QCoreApplication.translate("MainWindow", u"\u7f29\u5c0f", None))
 #endif // QT_CONFIG(tooltip)
         self.label.setText("")
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Tab 1", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Tab 2", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 
