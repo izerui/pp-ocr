@@ -1,6 +1,7 @@
 import imghdr
 import os
 import threading
+from builtins import map
 from itertools import groupby
 from queue import Queue
 
@@ -157,19 +158,19 @@ class Reader(QMainWindow, Ui_MainWindow):
             self.ocrQueue.put_nowait(ocrThread)
 
     @Slot()
-    def qrcodeResultCall(self, results:list):
+    def qrcodeResultCall(self, results: list):
         for res in results:
             self.textBrowser.append(f'识别二维码内容: \r\t{res["data"]} \n')
 
     @Slot()
-    def ocrResultCall(self, result, rect):
+    def ocrResultCall(self, pages, rect):
         # self.textBrowser.append(f'识别的区域: {repr(rect)} \t')
         # if not result or len(result[0]) == 0:
         #     return
         txts = ''
-        for res in result:
-            lines = [line[1][0] for line in res]
-            txts = '\r\t'.join(lines)
+        for page in pages:
+            contents = list(map(lambda line: line['content'], page['lines']))
+            txts = '\r\t'.join(contents)
         self.textBrowser.append(f'OCR识别结果: \r\t{txts} \n')
 
     @Slot()
