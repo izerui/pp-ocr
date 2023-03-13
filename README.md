@@ -12,7 +12,8 @@
 * pyside: `pip install pyside6`
 * pyzbar(识别二维码): `pip install pyzbar`
 * 打包pyinstaller: `pip install pyinstaller`
-* ~~ocr模块,自编译(未尝试): `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`~~
+* ~~ocr模块,自编译(未尝试): `pip install git+https://github.com/izerui/PaddleOCR.git@2.6#egg=paddleocr`~~ 
+  * 下载前设置代理: `export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890`
 
 # 打包
 * win: build.bat

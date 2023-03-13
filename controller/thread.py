@@ -22,6 +22,10 @@ class OcrThread(QThread):
         buff = QtCore.QBuffer(ba)
         buff.open(QtCore.QIODevice.WriteOnly)
         self.pixmap.save(buff, "PNG")
+        # 数组第一层: 每页
+        # 数组第二层: 每文字块
+        #       文字块[0]: 文字块的最小矩形区域的坐标(左上、右上、左下、右下)
+        #       文字块[1]: 文字块的内容及可信度(介于0 到 1之间)
         result = ocr.ocr(ba.data(), det=True, rec=True, cls=True)
         self.ocr_result.emit(result, self.rect)
 
