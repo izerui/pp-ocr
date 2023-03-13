@@ -28,6 +28,8 @@
   * Unable to find zbar shared library: `brew install zbar`
 * win:
   * `pip install opencv-python-headless`
+  * zbar 需要安装微软官方 Visual C++ 2013 (x86、x64)位运行库 https://www.7down.com/soft/2155.html
+
 
 # 更多模型
 * https://github.com/izerui/PaddleOCR/blob/release/2.6/doc/doc_ch/quickstart.md#11

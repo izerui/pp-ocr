@@ -1,15 +1,10 @@
 from queue import Queue
 
 import cv2
-from PIL import Image
 from PySide6 import QtCore
 from PySide6.QtCore import QThread, Signal, QRect
 from PySide6.QtGui import QPixmap, QImage
 from paddleocr import PaddleOCR
-
-# 用来识别二维码
-import pyzbar.pyzbar as pyzbar
-import numpy as np
 
 ocr = PaddleOCR(use_angle_cls=True, lang="ch")
 
@@ -47,11 +42,13 @@ class QrcodeThread(QThread):
 
         image_buffer = qimage.constBits()
 
+        import numpy as np
         image = np.frombuffer(image_buffer, dtype=np.uint8).reshape((height, width, int(bytes_per_line / width)))
 
         # 将RGB图像转换为灰度图像
         gray = cv2.cvtColor(image, cv2.COLOR_RGBA2GRAY)  # 或者使用 COLOR_BGR2GRAY
         # 识别二维码
+        import pyzbar.pyzbar as pyzbar
         decoded_objects = pyzbar.decode(gray)
 
         # 返回解码结果
