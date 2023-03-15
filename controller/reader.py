@@ -92,38 +92,42 @@ class Reader(QMainWindow, Ui_MainWindow):
         total_page = 1
         if not self.file:
             return
-        if imghdr.what(self.file) and ext != 'tiff':
-            # img = check_img(files[0])
+        # if imghdr.what(self.file) and ext != 'tiff':
+        #     # img = check_img(files[0])
+        #     # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
+        #     jpg = QtGui.QPixmap(self.file)
+        #     self.renderPixmap(jpg.scaled(self.zoom / 100.0 * jpg.width(), self.zoom / 100.0 * jpg.height()))
+        # else:
+        with fitz.open(self.file) as pdf:
+            total_page = pdf.page_count
+            if self.pageIndex + 1 > pdf.page_count:
+                self.pageIndex = pdf.page_count - 1
+            page: Page = pdf.load_page(self.pageIndex)
+            # 获取该页的文本块列表
+            text_blocks = page.get_text_blocks()
+            if text_blocks:
+                for res in text_blocks:
+                    # res: coordinates, text lines, block type and running block number.
+                    self.textBrowser.append(f'读取文本层: \r\t {repr(res[4])}')
+            # 设置缩放比例
+            mat = fitz.Matrix(self.zoom / 100.0, self.zoom / 100.0)
+            # 不使用alpha通道
+            pixmap = page.get_pixmap(matrix=mat, alpha=False)
+            # pixmap.save('ddd.png')
+            qimage = self.fitz_to_qimage(pixmap)
             # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
-            jpg = QtGui.QPixmap(self.file)
-            self.renderPixmap(jpg.scaled(self.zoom / 100.0 * jpg.width(), self.zoom / 100.0 * jpg.height()))
-        else:
-            with fitz.open(self.file) as pdf:
-                total_page = pdf.page_count
-                if self.pageIndex + 1 > pdf.page_count:
-                    self.pageIndex = pdf.page_count - 1
-                page: Page = pdf.load_page(self.pageIndex)
-                # 获取该页的文本块列表
-                text_blocks = page.get_text_blocks()
-                if text_blocks:
-                    for res in text_blocks:
-                        # res: coordinates, text lines, block type and running block number.
-                        self.textBrowser.append(f'读取文本层: \r\t {repr(res[4])}')
-                # 设置缩放比例
-                mat = fitz.Matrix(self.zoom / 100.0, self.zoom / 100.0)
-                # alpha 不透明
-                pixmap = page.get_pixmap(matrix=mat, alpha=False)
-                image_format = QImage.Format_RGBA8888 if pixmap.alpha else QImage.Format_RGB888
-                page_image = QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride, image_format)
-            # jpg = QtGui.QPixmap(files[0]).scaled(self.label.width(), self.label.height())
-            qpixmap = QPixmap.fromImage(page_image)
-            self.renderPixmap(qpixmap)
+        self.renderPixmap(QPixmap.fromImage(qimage))
         if rerender_left:
             # 设置分页预览
             model = ThumbModel(self.file, total_page)
             self.listView.setModel(model)
             self.listView.setCurrentIndex(model.index(0))
         self.showStatusTip()
+
+    def fitz_to_qimage(self, pixmap: fitz.Pixmap) -> QImage:
+        image_format = QImage.Format_RGBA8888 if pixmap.alpha else QImage.Format_RGB888
+        page_image = QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride, image_format)
+        return page_image
 
     # 渲染右侧展示区域图像
     def renderPixmap(self, pixmap):
@@ -163,7 +167,7 @@ class Reader(QMainWindow, Ui_MainWindow):
             self.textBrowser.append(f'识别二维码内容: \r\t{res["data"]} \n')
 
     @Slot()
-    def ocrResultCall(self, pages, rect):
+    def ocrResultCall(self, pages, rect: QRect):
         # self.textBrowser.append(f'识别的区域: {repr(rect)} \t')
         # if not result or len(result[0]) == 0:
         #     return
@@ -171,7 +175,7 @@ class Reader(QMainWindow, Ui_MainWindow):
         for page in pages:
             contents = list(map(lambda line: line['content'], page['lines']))
             txts = '\r\t'.join(contents)
-        self.textBrowser.append(f'OCR识别结果: \r\t{txts} \n')
+        self.textBrowser.append(f'坐标区域[{rect.topLeft().x()},{rect.topLeft().y()},{rect.bottomRight().x()},{rect.bottomRight().y()}] OCR识别结果: \r\t{txts} \n')
 
     @Slot()
     def pageClicked(self):
