@@ -62,15 +62,15 @@ class ImageLabel(QLabel):
             painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
             painter.drawRect(rect)
 
-            # 视觉层面上的起点坐标
-            _vision_start_point = QPoint(min(self.startPoint.x(), self.endPoint.x()), min(self.startPoint.y(), self.endPoint.y()))
-            # 视觉层面上的结束坐标
-            _vision_end_point = QPoint(max(self.startPoint.x(), self.endPoint.x()),
-                                      max(self.startPoint.y(), self.endPoint.y()))
-            painter.drawText(_vision_start_point.x() - 10, _vision_start_point.y() - 10,
-                             f'[{_vision_start_point.x()}, {_vision_start_point.y()}]')
-            painter.drawText(_vision_end_point.x() - 15, _vision_end_point.y() + 15,
-                             f'[{_vision_end_point.x()}, {_vision_end_point.y()}]')
+            # # 视觉层面上的起点坐标
+            # _vision_start_point = QPoint(min(self.startPoint.x(), self.endPoint.x()), min(self.startPoint.y(), self.endPoint.y()))
+            # # 视觉层面上的结束坐标
+            # _vision_end_point = QPoint(max(self.startPoint.x(), self.endPoint.x()),
+            #                           max(self.startPoint.y(), self.endPoint.y()))
+            # painter.drawText(_vision_start_point.x() - 10, _vision_start_point.y() - 10,
+            #                  f'[{_vision_start_point.x()}, {_vision_start_point.y()}]')
+            # painter.drawText(_vision_end_point.x() - 15, _vision_end_point.y() + 15,
+            #                  f'[{_vision_end_point.x()}, {_vision_end_point.y()}]')
         # self.drawSampleRects()
 
     def is_reversal_rect(self):
